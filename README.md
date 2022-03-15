@@ -4,8 +4,12 @@
 
 ### Client
 
+- port 3000
+
 - Library
   - dotenv
   - axios
 
 ### Admin
+
+- port 8001
