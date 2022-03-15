@@ -21,3 +21,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.vscode
+.idea
+.scannerwork
+
+.env-cmdrc.js
+
+#js-graphql
+.graphqlconfig
+schema.graphql
