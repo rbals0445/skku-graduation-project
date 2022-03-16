@@ -9,6 +9,7 @@
 - Library
   - dotenv
   - axios
+  - styled-component
 
 ### Admin
 
