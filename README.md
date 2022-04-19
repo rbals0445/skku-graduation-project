@@ -10,6 +10,8 @@
   - dotenv
   - axios
   - styled-component
+  - material-ui (v5)
+  - react-router-dom (v6)
 
 ### Admin
 

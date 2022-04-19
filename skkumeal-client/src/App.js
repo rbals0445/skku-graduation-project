@@ -1,11 +1,22 @@
 import styled from "styled-components";
+import LoginIcon from "@mui/icons-material/Login";
+import { useNavigate } from "react-router-dom";
 
 function App() {
 	//console.log(process.env.REACT_APP_TEST_ENV);
+	const navigate = useNavigate();
+
 	let img = ["/favicon.ico", "/favicon.ico", "/favicon.ico", "/favicon.ico"];
+
+	const handleLoginBtnClick = () => {
+		navigate("/login");
+	};
+
 	return (
 		<Wrapper>
-			<Header>MyPage</Header>
+			<Header>
+				<LoginIcon onClick={handleLoginBtnClick} sx={{ fontSize: "48px" }} />
+			</Header>
 			<Logo>SKKU MEAL</Logo>
 			{/* 카테고리 버튼 */}
 			<CategoryWrapper>
@@ -34,6 +45,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
+	border: solid red 3px;
 	display: flex;
 	margin-top: 40px;
 	margin-right: 40px;
@@ -42,6 +54,7 @@ const Header = styled.div`
 `;
 
 const Logo = styled.div`
+	border: solid red 3px;
 	display: flex;
 	font-size: 100px;
 	color: #fff;
@@ -49,6 +62,7 @@ const Logo = styled.div`
 `;
 
 const CategoryWrapper = styled.div`
+	border: solid red 3px;
 	display: flex;
 	justify-content: center;
 	margin: 20px;
@@ -61,6 +75,7 @@ const Category = styled.div`
 `;
 
 const SearchBarWrapper = styled.div`
+	border: solid red 3px;
 	display: flex;
 	justify-content: center;
 `;
