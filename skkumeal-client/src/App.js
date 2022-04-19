@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
+import { Logo } from "./components";
 
 function App() {
 	//console.log(process.env.REACT_APP_TEST_ENV);
@@ -17,7 +18,7 @@ function App() {
 			<Header>
 				<LoginIcon onClick={handleLoginBtnClick} sx={{ fontSize: "48px" }} />
 			</Header>
-			<Logo>SKKU MEAL</Logo>
+			<Logo />
 			{/* 카테고리 버튼 */}
 			<CategoryWrapper>
 				<Category>
@@ -51,14 +52,6 @@ const Header = styled.div`
 	margin-right: 40px;
 	font-size: 2rem;
 	justify-content: flex-end;
-`;
-
-const Logo = styled.div`
-	border: solid red 3px;
-	display: flex;
-	font-size: 100px;
-	color: #fff;
-	justify-content: center;
 `;
 
 const CategoryWrapper = styled.div`
