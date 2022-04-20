@@ -27,7 +27,7 @@ export const Login = () => {
 
     if (res.id === id && res.password === password) {
       console.log("pass");
-      navigate("/");
+      navigate("/signup");
     } else {
       alert("아이디 비밀번호를 다시 입력해주세요");
       console.log("error");
