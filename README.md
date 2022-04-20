@@ -12,7 +12,12 @@
   - styled-component
   - material-ui (v5)
   - react-router-dom (v6)
+  - react-hook-form (6.14.2)
 
 ### Admin
 
 - port 8001
+
+### 바꿔야할 요소들
+
+- 배경컴포넌트들을 어떻게 이쁘게 재사용 할까
