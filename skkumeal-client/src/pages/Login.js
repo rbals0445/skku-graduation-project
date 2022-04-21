@@ -27,7 +27,6 @@ export const Login = () => {
 
     if (res.id === id && res.password === password) {
       console.log("pass");
-      navigate("/signup");
     } else {
       alert("아이디 비밀번호를 다시 입력해주세요");
       console.log("error");
@@ -45,6 +44,10 @@ export const Login = () => {
   const handleChange = (e) => {
     if (!isValidId(e.target.value)) return;
     setText(e.target.value);
+  };
+
+  const handleSignUpBtnClick = () => {
+    navigate("/signup");
   };
 
   return (
@@ -77,7 +80,11 @@ export const Login = () => {
         <StyledButton type="submit" variant="contained" size="large">
           로그인
         </StyledButton>
-        <StyledButton variant="contained" size="large">
+        <StyledButton
+          onClick={handleSignUpBtnClick}
+          variant="contained"
+          size="large"
+        >
           회원가입
         </StyledButton>
       </InputForm>
