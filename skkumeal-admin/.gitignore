@@ -31,3 +31,5 @@ yarn-error.log*
 #js-graphql
 .graphqlconfig
 schema.graphql
+
+/config

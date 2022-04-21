@@ -1,10 +1,15 @@
 var express = require("express");
 var router = express.Router();
+var connection = require("../config/dbconfig");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   //res.send("respond with a resource");
-  res.json({ id: "km" });
+  connection.query("select * from user", (err, rows, fields) => {
+    if (err) throw err;
+
+    res.json(rows);
+  });
 });
 
 router.get("/login", function (req, res, next) {
