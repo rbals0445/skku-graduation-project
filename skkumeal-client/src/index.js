@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Login, SignUp } from "./pages";
+import { Login, SignUp, FoodList } from "./pages";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,6 +13,7 @@ ReactDOM.render(
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/foodlist/:category" element={<FoodList />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
