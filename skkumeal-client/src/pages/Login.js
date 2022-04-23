@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Logo } from "../components";
+import { Logo, StyledButton } from "../components";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { isValidId } from "../constants/utils";
-import axios from "axios";
+import { checkUserAccount } from "../apis";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
 
-  const { register, setError, errors, getValues, clearErrors } = useForm({
+  const { register, errors, getValues } = useForm({
     defaultValues: {
       id: "",
       password: "",
@@ -22,7 +21,7 @@ export const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { id, password } = getValues();
-    let res = await axios.get(`${process.env.REACT_APP_TEST_ENV}/users/login`);
+    let res = await checkUserAccount({ id, password });
     res = res.data;
 
     if (res.id === id && res.password === password) {
@@ -77,16 +76,29 @@ export const Login = () => {
           ref={register}
         />
         {errors.password && <p>{errors.password.message}</p>}
-        <StyledButton type="submit" variant="contained" size="large">
-          로그인
-        </StyledButton>
+        <StyledButton
+          type="submit"
+          variant="contained"
+          size="large"
+          value={"로그인"}
+          sx={{
+            margin: "16px 0",
+            width: "300px",
+            backgroundColor: "rgba(7, 42, 96)",
+          }}
+        />
+
         <StyledButton
           onClick={handleSignUpBtnClick}
           variant="contained"
           size="large"
-        >
-          회원가입
-        </StyledButton>
+          sx={{
+            margin: "16px 0",
+            width: "300px",
+            backgroundColor: "rgba(7, 42, 96)",
+          }}
+          value={"회원가입"}
+        ></StyledButton>
       </InputForm>
     </Wrapper>
   );
@@ -124,12 +136,4 @@ const InputField = styled.input`
   border-radius: 15px;
   text-indent: 10px;
   border: 0px solid white;
-`;
-
-const StyledButton = styled(Button)`
-  && {
-    margin: 16px 0;
-    width: 300px;
-    background-color: rgba(7, 42, 96);
-  }
 `;
