@@ -1,13 +1,16 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var cors = require("cors");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const cors = require("cors");
+require("dotenv").config(); // 환경변수 사용
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var uploadRouter = require("./routes/upload");
+// 라우팅
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const uploadRouter = require("./routes/upload");
+const authRouter = require("./routes/auth");
 
 var app = express();
 
@@ -17,7 +20,7 @@ app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors()); // enable all cors
@@ -25,6 +28,7 @@ app.use(cors()); // enable all cors
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/upload", uploadRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
