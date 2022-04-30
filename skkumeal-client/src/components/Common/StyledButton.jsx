@@ -14,7 +14,7 @@ export const StyledSmallButton = ({ value, ...props }) => {
 
 const SmallButton = styled(Button)`
   && {
-    margin: 16px 8px;
+    margin: 16px 0 0 8px;
     width: 100px;
     background-color: rgb(141, 198, 63);
     color: white;

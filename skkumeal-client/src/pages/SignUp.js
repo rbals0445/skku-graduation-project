@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Logo, StyledButton, Input, InputWithButton } from "../components";
-import { Box } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { sendEmailAuthCode, fileUploadToDB, fileUploadToS3 } from "../apis";
+import { REGEXP_VALID_EMAIL } from "../constants/regexp";
 
 export const SignUp = () => {
   const navigate = useNavigate();
-  const [url, setUrl] = useState("");
 
-  const { register, errors, getValues } = useForm({
+  const [url, setUrl] = useState("");
+  const [disabled, setDisabled] = useState({
+    email: false,
+    id: false,
+    authCode: false,
+  });
+
+  const { register, errors, getValues, handleSubmit, trigger } = useForm({
     defaultValues: {
       id: "",
       password: "",
@@ -22,20 +28,32 @@ export const SignUp = () => {
     navigate("/");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    await fileUploadToDB(getValues(), url);
+  const onSubmit = async (data) => {
+    console.log(data);
+    navigate("/");
+    // await fileUploadToDB(getValues(), url);
   };
 
   const handleAuth = async () => {
     const { email } = getValues();
-    if (email.length) {
+
+    if (await trigger()) {
       try {
+        setDisabled((prev) => ({ ...prev, email: true }));
         await sendEmailAuthCode(email);
       } catch (e) {
         console.log(e);
       }
+    }
+  };
+
+  const handleCheckAuthCode = async () => {
+    const { authCode } = getValues();
+    try {
+      console.log(authCode);
+      setDisabled((prev) => ({ ...prev, authCode: true }));
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -61,31 +79,57 @@ export const SignUp = () => {
       </Header>
       <Logo />
 
-      <InputForm>
-        <Box width="400px">
+      <InputForm onSubmit={handleSubmit(onSubmit)}>
+        <InputWithButton
+          required
+          width="400px"
+          placeholder="xxx@skku.edu"
+          ref={register({
+            pattern: {
+              value: REGEXP_VALID_EMAIL,
+              message: "xxx@skku.edu 형식으로 입력해주세요",
+            },
+          })}
+          name="email"
+          value={"인증하기"}
+          onClick={handleAuth}
+          errorMessage={errors.email?.message}
+          disabled={disabled.email}
+        />
+
+        {disabled.email && (
           <InputWithButton
             required
-            placeholder="xxx@skku.edu"
+            width="400px"
+            placeholder="인증코드 입력"
             ref={register}
-            name="email"
-            value={"인증하기"}
-            onClick={handleAuth}
+            name="authCode"
+            value={"확인하기"}
+            onClick={handleCheckAuthCode}
+            disabled={disabled.authCode}
           />
-        </Box>
+        )}
 
-        <Box width="400px">
-          <InputWithButton
-            required
-            placeholder="아이디"
-            ref={register}
-            name="id"
-            value={"중복확인"}
-          />
-        </Box>
-
-        <Input required placeholder="비밀번호" ref={register} name="pwd" />
+        <InputWithButton
+          required
+          placeholder="아이디"
+          ref={register}
+          name="id"
+          value={"중복확인"}
+          width="400px"
+          disabled={disabled.id}
+        />
 
         <Input
+          type="password"
+          required
+          placeholder="비밀번호"
+          ref={register}
+          name="pwd"
+        />
+
+        <Input
+          type="password"
           required
           placeholder="비밀번호 확인"
           ref={register}
@@ -96,7 +140,6 @@ export const SignUp = () => {
           type="submit"
           variant="contained"
           size="large"
-          onClick={handleSubmit}
           value={"가입하기"}
           sx={{
             margin: "16px 0",
