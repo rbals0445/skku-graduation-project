@@ -4,7 +4,12 @@ import { Logo, StyledButton, Input, InputWithButton } from "../components";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { sendEmailAuthCode, fileUploadToDB, fileUploadToS3 } from "../apis";
+import {
+  sendEmailAuthCode,
+  fileUploadToDB,
+  fileUploadToS3,
+  checkAuthCode,
+} from "../apis";
 import { REGEXP_VALID_EMAIL } from "../constants/regexp";
 
 export const SignUp = () => {
@@ -17,12 +22,13 @@ export const SignUp = () => {
     authCode: false,
   });
 
-  const { register, errors, getValues, handleSubmit, trigger } = useForm({
-    defaultValues: {
-      id: "",
-      password: "",
-    },
-  });
+  const { register, errors, getValues, handleSubmit, trigger, setError } =
+    useForm({
+      defaultValues: {
+        id: "",
+        password: "",
+      },
+    });
 
   const handleClick = () => {
     navigate("/");
@@ -48,10 +54,21 @@ export const SignUp = () => {
   };
 
   const handleCheckAuthCode = async () => {
-    const { authCode } = getValues();
+    const { email, authCode } = getValues();
     try {
       console.log(authCode);
-      setDisabled((prev) => ({ ...prev, authCode: true }));
+
+      const res = await checkAuthCode(email, authCode);
+
+      if (res.data.result) {
+        setDisabled((prev) => ({ ...prev, authCode: true }));
+        await trigger("authCode"); // setError하고 trigger하면 그냥 error 사라져버림.
+      } else {
+        setError("authCode", {
+          type: "manual",
+          message: "인증코드를 다시 확인해주세요",
+        });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -89,6 +106,10 @@ export const SignUp = () => {
               value: REGEXP_VALID_EMAIL,
               message: "xxx@skku.edu 형식으로 입력해주세요",
             },
+            required: {
+              value: true,
+              message: "이메일을 입력해주세요",
+            },
           })}
           name="email"
           value={"인증하기"}
@@ -107,6 +128,7 @@ export const SignUp = () => {
             value={"확인하기"}
             onClick={handleCheckAuthCode}
             disabled={disabled.authCode}
+            errorMessage={errors.authCode?.message}
           />
         )}
 
