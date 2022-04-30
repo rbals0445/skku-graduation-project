@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Logo, StyledSmallButton, StyledButton } from "../components";
+import { Logo, StyledButton, Input, InputWithButton } from "../components";
 import { Box } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +50,10 @@ export const SignUp = () => {
     // 이거 보내고 그 다음에 그거 받아서 DB에 넣음.
   };
 
+  const handleOK = () => {
+    alert("handleOK");
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -58,35 +62,36 @@ export const SignUp = () => {
       <Logo />
 
       <InputForm>
-        <Box sx={{ display: "flex", width: "400px" }}>
-          <InputField
+        <Box width="400px">
+          <InputWithButton
             required
-            placeholder="이메일"
+            placeholder="xxx@skku.edu"
             ref={register}
             name="email"
+            value={"인증하기"}
+            onClick={handleAuth}
           />
-          <StyledSmallButton value={"인증하기"} onClick={handleAuth} />
         </Box>
-        <Box sx={{ display: "flex", width: "400px" }}>
-          <InputField required placeholder="아이디" ref={register} name="id" />
-          <StyledSmallButton value={"중복확인"} />
-        </Box>
-        <Box>
-          <InputField
+
+        <Box width="400px">
+          <InputWithButton
             required
-            placeholder="비밀번호"
+            placeholder="아이디"
             ref={register}
-            name="pwd"
+            name="id"
+            value={"중복확인"}
           />
         </Box>
-        <Box>
-          <InputField
-            required
-            placeholder="비밀번호 확인"
-            ref={register}
-            name="pwdCheck"
-          />
-        </Box>
+
+        <Input required placeholder="비밀번호" ref={register} name="pwd" />
+
+        <Input
+          required
+          placeholder="비밀번호 확인"
+          ref={register}
+          name="pwdCheck"
+        />
+
         <StyledButton
           type="submit"
           variant="contained"
@@ -99,7 +104,7 @@ export const SignUp = () => {
             backgroundColor: "rgba(7, 42, 96)",
           }}
         />
-        <label>이미지</label>
+        {/* <label>이미지</label>
         <input
           type="file"
           name="fileUpload"
@@ -130,7 +135,7 @@ export const SignUp = () => {
           ref={register}
           value={"010-1234-1234"}
           onChange={null}
-        />
+        /> */}
       </InputForm>
     </Wrapper>
   );
@@ -151,15 +156,6 @@ const Header = styled.div`
   margin-right: 40px;
   font-size: 2rem;
   justify-content: flex-end;
-`;
-
-const InputField = styled.input`
-  margin: 16px 0;
-  padding: 0px;
-  width: 400px;
-  height: 40px;
-  border-radius: 15px;
-  text-indent: 10px;
 `;
 
 const InputForm = styled.form`
