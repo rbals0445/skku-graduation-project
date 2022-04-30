@@ -9,6 +9,7 @@ import {
   fileUploadToDB,
   fileUploadToS3,
   checkAuthCode,
+  checkDuplicatedId,
 } from "../apis";
 import { REGEXP_VALID_EMAIL } from "../constants/regexp";
 
@@ -56,8 +57,6 @@ export const SignUp = () => {
   const handleCheckAuthCode = async () => {
     const { email, authCode } = getValues();
     try {
-      console.log(authCode);
-
       const res = await checkAuthCode(email, authCode);
 
       if (res.data.result) {
@@ -74,6 +73,27 @@ export const SignUp = () => {
     }
   };
 
+  const handleCheckDuplicatedId = async () => {
+    const { id } = getValues();
+
+    try {
+      const res = await checkDuplicatedId(id);
+
+      if (res.data.result) {
+        // 중복인경우
+        setError("id", {
+          type: "manual",
+          message: "이미 존재하는 id입니다.",
+        });
+      } else {
+        setDisabled((prev) => ({ ...prev, id: true }));
+        await trigger("id");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleSubmitFile = async () => {
     try {
       const pos = await fileUploadToS3(getValues("fileUpload"));
@@ -83,10 +103,6 @@ export const SignUp = () => {
     }
 
     // 이거 보내고 그 다음에 그거 받아서 DB에 넣음.
-  };
-
-  const handleOK = () => {
-    alert("handleOK");
   };
 
   return (
@@ -139,7 +155,9 @@ export const SignUp = () => {
           name="id"
           value={"중복확인"}
           width="400px"
+          onClick={handleCheckDuplicatedId}
           disabled={disabled.id}
+          errorMessage={errors.id?.message}
         />
 
         <Input

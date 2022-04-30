@@ -13,3 +13,8 @@ export const checkAuthCode = (email, code) => {
 export const checkUserAccount = ({ id, password }) => {
   return axiosInstance.post("/users/login", { id, password });
 };
+
+// 중복 id 확인
+export const checkDuplicatedId = (id) => {
+  return axiosInstance.post("/auth/checkDuplicatedId", { id });
+};

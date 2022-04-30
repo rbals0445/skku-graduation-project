@@ -78,4 +78,21 @@ router.post("/checkAuthCode", async (req, res) => {
   }
 });
 
+// ID 중복확인
+router.post("/checkDuplicatedId", async (req, res) => {
+  const id = req.body?.id;
+
+  const checkDuplicatedId = "select id from user where id=?";
+
+  try {
+    const [rows] = await connection.query(checkDuplicatedId, [id]);
+
+    return rows.length
+      ? res.json({ result: true })
+      : res.json({ result: false });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;
