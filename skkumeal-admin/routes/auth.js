@@ -18,8 +18,8 @@ const sendMail = (to, key) => {
     let message = {
       from: process.env.EMAIL_ID,
       to,
-      subject: "이메일 인증  요청 메일입니다.",
-      html: `<b>${key} 를 입력해주세요!</b>`,
+      subject: "이메일 인증요청 메일입니다.",
+      html: `<b>${key}를 입력해주세요!</b>`,
     };
     let transporter = nodemailer.createTransport(mailConfig);
     transporter.sendMail(message);
@@ -28,40 +28,54 @@ const sendMail = (to, key) => {
   }
 };
 
-router.post("/", (req, res) => {
+// 이메일 전송
+router.post("/", async (req, res) => {
   const to = req.body?.email;
   const key = Math.random().toString(36).slice(2); // 35->z 36 -> 10
 
-  connection.query(
-    "select email from user where email = ?",
-    [to],
-    (err, results) => {
-      if (err) throw err;
+  const checkEmailQuery = "select email from user where email = ?";
+  const isEmailRegisteredQuery = "select email from auth where email = ?"; // 이메일이 auth에 등록되어있는지 확인
+  const updateAuthCodeQuery = "update auth set auth_code = ? where email = ?";
+  const insertAuthCodeQuery = "insert into auth values (?,?)";
 
-      if (results.length === 0) {
-        sendMail(to, key); // 메일전송
+  try {
+    const [rows] = await connection.query(checkEmailQuery, [to]);
 
-        connection.query(
-          "select email from auth where email = ?",
-          [to],
-          (err, results) => {
-            if (err) throw err;
+    if (!rows.length) {
+      // 이메일 없는경우
+      sendMail(to, key);
+      const [rows] = await connection.query(isEmailRegisteredQuery, [to]);
 
-            if (results.length) {
-              // 이메일이 이미 있는경우
-              connection.query("update auth set auth_code = ?", [key]);
-            } else {
-              // 없는경우
-              connection.query("insert into auth values (?,?)", [to, key]);
-            }
-            return res.json({ result: "true" });
-          }
-        );
-      } else {
-        return res.json({ result: "Duplicated Email" });
-      }
+      rows.length
+        ? await connection.query(updateAuthCodeQuery, [key, to])
+        : await connection.query(insertAuthCodeQuery, [to, key]);
+
+      return res.json({ result: "true" });
+    } else {
+      // 이메일 있는경우
+      return res.json({ result: "Duplicated Email" });
     }
-  );
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// 코드 확인
+router.post("/checkAuthCode", async (req, res) => {
+  const email = req.body?.email;
+  const code = req.body?.code;
+
+  const checkAuthCodeQuery = "select auth_code from auth where email = ?";
+
+  try {
+    const [rows] = await connection.query(checkAuthCodeQuery, [email]);
+
+    return rows[0].auth_code === code
+      ? res.json({ result: true })
+      : res.json({ result: false });
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 module.exports = router;
