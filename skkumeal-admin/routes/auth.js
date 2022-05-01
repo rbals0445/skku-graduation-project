@@ -95,4 +95,21 @@ router.post("/checkDuplicatedId", async (req, res) => {
   }
 });
 
+// 회원가입
+router.post("/signup", async (req, res) => {
+  const { email, id, password } = req.body;
+
+  const addUser = "insert into user values(?,?,?,?)"; // pwd 암호화 필요
+
+  try {
+    const [rows] = await connection.query(addUser, [id, password, email, 1]);
+
+    return rows.length
+      ? res.json({ result: true })
+      : res.json({ result: false });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;

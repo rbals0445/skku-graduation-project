@@ -18,3 +18,9 @@ export const checkUserAccount = ({ id, password }) => {
 export const checkDuplicatedId = (id) => {
   return axiosInstance.post("/auth/checkDuplicatedId", { id });
 };
+
+// 회원가입
+export const userSignup = (email, id, password) => {
+  console.log(email, id, password);
+  return axiosInstance.post("/auth/signup", { email, id, password });
+};

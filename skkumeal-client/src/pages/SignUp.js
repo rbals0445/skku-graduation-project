@@ -10,6 +10,7 @@ import {
   fileUploadToS3,
   checkAuthCode,
   checkDuplicatedId,
+  userSignup,
 } from "../apis";
 import { REGEXP_VALID_EMAIL } from "../constants/regexp";
 
@@ -35,9 +36,45 @@ export const SignUp = () => {
     navigate("/");
   };
 
+  // 최종 제출
   const onSubmit = async (data) => {
-    console.log(data);
-    navigate("/");
+    const { email: disEmail, id: disId, authCode: disAuthCode } = disabled;
+    const { email, id, pwd, pwdCheck } = getValues(); // trigger하면서 값이 사라짐
+
+    if (pwd === pwdCheck) {
+      trigger(["pwd", "pwdCheck"]);
+    } else {
+      const error = [
+        {
+          type: "manual",
+          name: "pwd",
+          message: "비밀번호를 다시 확인해주세요",
+        },
+        {
+          type: "manual",
+          name: "pwdCheck",
+          message: "비밀번호를 다시 확인해주세요",
+        },
+      ];
+
+      error.forEach(({ name, type, message }) =>
+        setError(name, { type, message })
+      );
+
+      return;
+    }
+
+    if (disEmail && disId && disAuthCode && pwd === pwdCheck) {
+      await userSignup(email, id, pwd);
+      alert("가입이 완료되었습니다"); // dialog로 바꿔야함
+      navigate("/");
+    } else {
+      alert("아이디와 이메일을 확인해주세요");
+    }
+
+    // console.log(data);
+    // trigger();
+    //navigate("/");
     // await fileUploadToDB(getValues(), url);
   };
 
@@ -166,6 +203,7 @@ export const SignUp = () => {
           placeholder="비밀번호"
           ref={register}
           name="pwd"
+          errorMessage={errors.pwd?.message}
         />
 
         <Input
@@ -174,6 +212,7 @@ export const SignUp = () => {
           placeholder="비밀번호 확인"
           ref={register}
           name="pwdCheck"
+          errorMessage={errors.pwdCheck?.message}
         />
 
         <StyledButton
