@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Logo, StyledButton } from "../components";
+import { Logo, StyledButton, Input } from "../components";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { isValidId } from "../constants/utils";
 import { checkUserAccount } from "../apis";
+import { myStorage } from "../constants/utils";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
 
-  const { register, errors, getValues } = useForm({
+  const { register, setError, getValues, trigger, errors } = useForm({
     defaultValues: {
       id: "",
       password: "",
@@ -24,16 +25,16 @@ export const Login = () => {
     let res = await checkUserAccount({ id, password });
     res = res.data;
 
-    if (res.id === id && res.password === password) {
-      console.log("pass");
+    if (res.result) {
+      await trigger();
+      navigate("/");
+      myStorage.setValue("Type", res.type);
     } else {
-      alert("아이디 비밀번호를 다시 입력해주세요");
-      console.log("error");
+      setError("password", {
+        type: "manual",
+        message: "아이디나 비밀번호를 다시 확인해주세요",
+      });
     }
-
-    /*
-      아이디 비번만 확인하면 됨.
-    */
   };
 
   const handleLoginBtnClick = () => {
@@ -58,7 +59,7 @@ export const Login = () => {
       {/* 로그인 UI */}
 
       <InputForm onSubmit={handleSubmit}>
-        <InputField
+        <Input
           name="id"
           ref={register}
           placeholder="ID"
@@ -66,16 +67,16 @@ export const Login = () => {
           value={text}
           onChange={handleChange}
         />
-        {errors.id && <p>{errors.id.message}</p>}
-        <InputField
+        <Input
           required
           type="password"
           autoComplete="off"
           name="password"
           placeholder="PWD"
           ref={register}
+          errorMessage={errors.password?.message}
         />
-        {errors.password && <p>{errors.password.message}</p>}
+
         <StyledButton
           type="submit"
           variant="contained"
@@ -87,7 +88,6 @@ export const Login = () => {
             backgroundColor: "rgba(7, 42, 96)",
           }}
         />
-
         <StyledButton
           onClick={handleSignUpBtnClick}
           variant="contained"
@@ -127,13 +127,4 @@ const InputForm = styled.form`
   display: flex;
   align-items: center;
   flex-direction: column;
-`;
-
-const InputField = styled.input`
-  margin: 16px 0;
-  width: 400px;
-  height: 40px;
-  border-radius: 15px;
-  text-indent: 10px;
-  border: 0px solid white;
 `;
