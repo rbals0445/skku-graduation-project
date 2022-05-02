@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "./components";
 import { CATEGORY } from "./constants/constant";
+import { myStorage } from "./constants/utils";
 import SearchIcon from "@mui/icons-material/Search";
 
 function App() {
-  //console.log(process.env.REACT_APP_TEST_ENV);
   let arr = [
     "수해복",
     "맥도날드",
@@ -18,6 +18,7 @@ function App() {
   ];
 
   const navigate = useNavigate();
+  const [type, setType] = useState();
   const [data, setData] = useState([]);
 
   const handleLoginBtnClick = () => {
@@ -34,16 +35,20 @@ function App() {
     } else setData([...arr.filter((elem) => elem.includes(e.target.value))]);
   };
 
-  const handleClick = (e) => {
-    
-  };
+  const handleClick = (e) => {};
 
+  useEffect(() => {
+    setType(myStorage.getValue("Type"));
+  }, []);
   // cafe, restaurant, pub
-
   return (
     <Wrapper>
       <Header>
-        <LoginIcon onClick={handleLoginBtnClick} sx={{ fontSize: "48px" }} />
+        {type !== "1" ? (
+          <LoginIcon onClick={handleLoginBtnClick} sx={{ fontSize: "48px" }} />
+        ) : (
+          <div>회원 입니다</div>
+        )}
       </Header>
       <Logo />
       {/* 카테고리 버튼 */}
