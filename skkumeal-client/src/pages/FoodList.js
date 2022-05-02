@@ -14,7 +14,7 @@ export const FoodList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const res = fetchStoreLists(category).then((res) =>
+    fetchStoreLists(category).then((res) =>
       setData((prev) => [...prev, ...res.data])
     );
   }, []);
