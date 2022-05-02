@@ -7,8 +7,32 @@ export const FoodDetail = ({ setOpen, data }) => {
 			<Overlay onClick={() => setOpen(false)}>
 				<Wrapper>
 					<div style={{ display: "flex" }}>
-						<img src={data.image} alt="#" style={{ flex: "1" }} />
-						<div style={{ flex: "1" }}>ddd</div>
+						{/* <img src={data.image} alt="#" style={{ flex: "1" }} />
+						<div style={{ flex: "1" }}>ddd</div> */}
+						<img
+							src={data.image}
+							alt="#"
+							style={{ width: "50%", display: "inline-block" }}
+						/>
+						<div
+							style={{
+								width: "50%",
+								display: "inline-block",
+								marginLeft: "16px",
+							}}
+						>
+							<h1>영업시간</h1>
+							<h3>ddd</h3>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+							<h1>ddd</h1>
+						</div>
 					</div>
 				</Wrapper>
 			</Overlay>
