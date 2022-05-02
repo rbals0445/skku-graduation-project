@@ -3,24 +3,35 @@ import { useParams } from "react-router-dom";
 import { MediaCard } from "../components";
 import { Grid, Box } from "@mui/material";
 import { CATEGORY } from "../constants/constant";
-import axios from "axios";
 import HomeIcon from "@mui/icons-material/Home";
 import { useNavigate } from "react-router-dom";
 import { fetchStoreLists } from "../apis";
+import { FoodDetail } from "../components";
 
 export const FoodList = () => {
   const { category } = useParams();
   const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [key, setKey] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchStoreLists(category).then((res) =>
+    const res = fetchStoreLists(category).then((res) =>
       setData((prev) => [...prev, ...res.data])
     );
   }, []);
 
+  console.log(data);
+
   const handleNavigate = () => {
     navigate("/");
+  };
+
+  const handleCardClick = (key) => {
+    //modal 오픈.
+    setOpen(true);
+    setKey(key);
   };
 
   return (
@@ -56,7 +67,15 @@ export const FoodList = () => {
           {data &&
             data.map((elem, key) => {
               return (
-                <Grid item sm={12} md={6} lg={4} xl={3} key={key}>
+                <Grid
+                  item
+                  sm={12}
+                  md={6}
+                  lg={4}
+                  xl={3}
+                  key={key}
+                  onClick={() => handleCardClick(key)}
+                >
                   <MediaCard
                     img={elem.image}
                     location={elem.location}
@@ -68,6 +87,7 @@ export const FoodList = () => {
             })}
         </Grid>
       </Box>
+      {open && <FoodDetail setOpen={setOpen} data={data[key]} />}
     </>
   );
 };
