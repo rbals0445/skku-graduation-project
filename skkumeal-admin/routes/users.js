@@ -4,30 +4,67 @@ var connection = require("../config/dbconfig");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
-  //res.send("respond with a resource");
-  connection.query("select * from user", (err, rows, fields) => {
-    if (err) throw err;
+	//res.send("respond with a resource");
+	connection.query("select * from user", (err, rows, fields) => {
+		if (err) throw err;
 
-    res.json(rows);
-  });
+		res.json(rows);
+	});
 });
 
 router.post("/login", async function (req, res, next) {
-  const { id, password } = req.body;
+	const { id, password } = req.body;
 
-  const checkUserInfo = "select * from user where id = ? and pwd = ?";
-  try {
-    const [rows] = await connection.query(checkUserInfo, [id, password]);
+	const checkUserInfo = "select * from user where id = ? and pwd = ?";
+	try {
+		const [rows] = await connection.query(checkUserInfo, [id, password]);
 
-    return rows.length
-      ? res.json({ result: true, type: rows[0].type })
-      : res.json({ result: false });
-  } catch (e) {
-    console.log(e);
-  }
+		return rows.length
+			? res.json({ result: true, type: rows[0].type })
+			: res.json({ result: false });
+	} catch (e) {
+		console.log(e);
+	}
 
-  res.json({ id: "hkm", password: "1234" });
+	res.json({ id: "hkm", password: "1234" });
 });
 // 이번엔 쿠키세션 방식으로 저장하는거 연습해야함
+
+// 좋아요
+router.post("/like", async (req, res) => {
+	// id, name
+	const { id, name } = req.body;
+
+	const findList = "select * from favorite where id=? and restaurant_name=?";
+	const likeQuery = "insert into favorite values(?,?)";
+	try {
+		const [rows] = await connection.query(findList, [id, name]);
+		if (!rows.length) {
+			await connection.query(likeQuery, [id, name]);
+		}
+
+		return res.json({ result: true });
+	} catch (e) {
+		console.log(e);
+	}
+});
+
+router.post("/dislike", async (req, res) => {
+	// id,name 삭제
+	const { id, name } = req.body;
+
+	const findList = "select * from favorite where id=? and restaurant_name=?";
+	const dislikeQuery = "delete from favorite where id=? and restaurant_name=?";
+	try {
+		const [rows] = await connection.query(findList, [id, name]);
+		if (rows.length) {
+			await connection.query(dislikeQuery, [id, name]);
+		}
+
+		return res.json({ result: true });
+	} catch (e) {
+		console.log(e);
+	}
+});
 
 module.exports = router;
