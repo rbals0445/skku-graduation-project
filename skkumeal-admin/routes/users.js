@@ -67,4 +67,37 @@ router.post("/dislike", async (req, res) => {
 	}
 });
 
+// 좋아요
+router.post("/getLike", async (req, res) => {
+	// id, name
+	const { id, name } = req.body;
+
+	const findList = "select * from favorite where id=? and restaurant_name=?";
+	try {
+		const [rows] = await connection.query(findList, [id, name]);
+		if (rows.length) {
+			return res.json({ return: true });
+		}
+		return res.json({ result: false });
+	} catch (e) {
+		console.log(e);
+	}
+});
+
+router.post("/mypage", async (req, res) => {
+	// id
+	const { id } = req.body;
+
+	const getLikeList =
+		"select * from restaurant as r INNER JOIN favorite as f	on r.name = f.restaurant_name where f.id = ?";
+
+	try {
+		const [rows] = await connection.query(getLikeList, [id]);
+
+		return res.json({ rows });
+	} catch (e) {
+		console.log(e);
+	}
+});
+
 module.exports = router;

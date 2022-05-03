@@ -1,12 +1,13 @@
-import React, { useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { likeApi, dislikeApi } from "../../apis";
+import { likeApi, dislikeApi, isLikeChecked } from "../../apis";
+import { myStorage } from "../../constants/utils";
 
 let timer;
 export const FoodDetail = ({ setOpen, data }) => {
-	const [like, setLike] = useState(false);
+	const [like, setLike] = useState();
 
 	const debounceFunction = (cb, delay) => {
 		if (timer) clearTimeout(timer);
@@ -15,17 +16,30 @@ export const FoodDetail = ({ setOpen, data }) => {
 
 	const handleLike = (e) => {
 		e.stopPropagation();
-		debounceFunction(async () => await likeApi("like", "고피자"), 3000);
+		debounceFunction(
+			async () => await likeApi(myStorage.getValue("id"), data.name),
+			1500
+		);
 
 		setLike((prev) => !prev);
 	};
 
 	const handleDislike = async (e) => {
 		e.stopPropagation();
-		debounceFunction(async () => await dislikeApi("like", "고피자"), 3000);
+		debounceFunction(
+			async () => await dislikeApi(myStorage.getValue("id"), data.name),
+			1500
+		);
 
 		setLike((prev) => !prev);
 	};
+
+	useEffect(() => {
+		if (myStorage.getValue("id"))
+			isLikeChecked(myStorage.getValue("id"), data.name).then((res) =>
+				setLike(res.data.return)
+			);
+	}, []);
 
 	return (
 		<>
@@ -56,17 +70,18 @@ export const FoodDetail = ({ setOpen, data }) => {
 								</h2>
 							</div>
 							<div style={{ marginTop: "15px" }}>
-								{like ? (
-									<FavoriteIcon
-										onClick={handleDislike}
-										sx={{ fontSize: "60px", color: "red" }}
-									/>
-								) : (
-									<FavoriteBorderIcon
-										onClick={handleLike}
-										sx={{ fontSize: "60px", color: "red" }}
-									/>
-								)}
+								{localStorage.hasOwnProperty("id") &&
+									(like ? (
+										<FavoriteIcon
+											onClick={handleDislike}
+											sx={{ fontSize: "60px", color: "red" }}
+										/>
+									) : (
+										<FavoriteBorderIcon
+											onClick={handleLike}
+											sx={{ fontSize: "60px", color: "red" }}
+										/>
+									))}
 							</div>
 						</div>
 
