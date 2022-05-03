@@ -207,7 +207,6 @@ const Typo = styled.div`
 `;
 
 const InputForm = styled.form`
-	border: solid red 3px;
 	display: flex;
 	align-items: center;
 	flex-direction: column;

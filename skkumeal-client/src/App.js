@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
-import { Logo } from "./components";
+import { Logo, StyledSmallButton } from "./components";
 import { CATEGORY } from "./constants/constant";
 import { myStorage } from "./constants/utils";
+import { MediaCard } from "./components";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import { Grid, Box } from "@mui/material";
 
 function App() {
 	let arr = [
@@ -20,6 +22,7 @@ function App() {
 	const navigate = useNavigate();
 	const [type, setType] = useState();
 	const [data, setData] = useState([]);
+	const [text, setText] = useState();
 
 	const handleLoginBtnClick = () => {
 		navigate("/login");
@@ -30,6 +33,8 @@ function App() {
 	};
 
 	const handleChange = (e) => {
+		setText(e.target.value);
+		// 여기서 e.target.value로 값 가져온걸 setData에 넣어줌.
 		if (e.target.value.length === 0) {
 			setData([]);
 		} else setData([...arr.filter((elem) => elem.includes(e.target.value))]);
@@ -39,6 +44,16 @@ function App() {
 		navigate("/mypage");
 	};
 
+	const handleClick = (elem) => {
+		setText(elem);
+		setData([]);
+	};
+
+	const handleSearch = () => {
+		// text로 검색.
+		console.log(text);
+	};
+
 	useEffect(() => {
 		setType(myStorage.getValue("Type"));
 	}, []);
@@ -46,7 +61,7 @@ function App() {
 	return (
 		<Wrapper>
 			<Header>
-				{type !== "1" ? (
+				{type !== "1" && type !== "2" ? (
 					<LoginIcon onClick={handleLoginBtnClick} sx={{ fontSize: "48px" }} />
 				) : (
 					<AccountBoxIcon onClick={handleMyPageClick} sx={{ fontSize: "48px" }}>
@@ -81,11 +96,16 @@ function App() {
 			{/* 검색바 */}
 			<div style={{ display: "flex", justifyContent: "center" }}>
 				<SearchBarWrapper>
-					<SearchBar id="search" maxLength={30} onChange={handleChange} />
+					<SearchBar
+						id="search"
+						maxLength={30}
+						onChange={handleChange}
+						value={text || ""}
+					/>
 					{data.length > 0 &&
 						data.map((elem, key) => (
 							<AutoOutput
-								onClick={handleMyPageClick}
+								onClick={() => handleClick(elem)}
 								style={{ paddingLeft: "24px" }}
 								key={key}
 							>
@@ -93,7 +113,21 @@ function App() {
 							</AutoOutput>
 						))}
 				</SearchBarWrapper>
+				<StyledSmallButton
+					style={{
+						backgroundColor: "rgba(7, 42, 96)",
+						color: "white",
+						margin: "0",
+						height: "38px",
+					}}
+					onClick={handleSearch}
+					value={"검색하기"}
+				/>
 			</div>
+
+			<Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+				<MediaCard width={"1000px"} />
+			</Box>
 		</Wrapper>
 	);
 }
@@ -109,7 +143,6 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-	border: solid red 3px;
 	display: flex;
 	margin-top: 40px;
 	margin-right: 40px;
@@ -118,7 +151,6 @@ const Header = styled.div`
 `;
 
 const CategoryWrapper = styled.div`
-	border: solid red 3px;
 	display: flex;
 	justify-content: center;
 	margin: 20px;
@@ -131,16 +163,12 @@ const Category = styled.div`
 `;
 
 const SearchBarWrapper = styled.div`
-	border: solid red 3px;
-
 	justify-content: center;
 `;
 
 const SearchBar = styled.input`
 	display: flex;
 	width: 640px;
-
-	border-color: red;
 	min-height: 32px;
 	font-size: 16px;
 	justify-content: center;

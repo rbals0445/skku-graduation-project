@@ -4,9 +4,15 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 
-export const MediaCard = ({ img, location, name, openhour }) => {
+export const MediaCard = ({ img, location, name, openhour, width }) => {
 	return (
-		<Card sx={{ maxWidth: 345, boxShadow: "5px 5px 5px rgba(0,0,0,0.1)" }}>
+		<Card
+			sx={
+				width
+					? { width, boxShadow: "5px 5px 5px rgba(0,0,0,0.1)" }
+					: { maxWidth: "345px", boxShadow: "5px 5px 5px rgba(0,0,0,0.1)" }
+			}
+		>
 			<CardMedia
 				sx={{ objectFit: "fill" }}
 				component="img"
